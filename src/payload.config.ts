@@ -76,6 +76,14 @@ export default buildConfig({
               position: 'sidebar',
             },
           },
+          {
+            name: 'enableGDPR',
+            label: 'Enable GDPR',
+            type: 'checkbox',
+            admin: {
+              position: 'sidebar',
+            },
+          },
         ],
       },
       formSubmissionOverrides: {
@@ -85,8 +93,11 @@ export default buildConfig({
               const sendSubmissionToHubSpot = async (): Promise<void> => {
                 const { form, submissionData } = doc
                 const portalID = process.env.PRIVATE_HUBSPOT_PORTAL_KEY
+                const filteredFields = submissionData.filter(
+                  item => item.field !== 'agreeToStoreData',
+                )
                 const data = {
-                  fields: submissionData.map(key => ({
+                  fields: filteredFields.map(key => ({
                     name: key.field,
                     value: key.value,
                   })),
@@ -94,6 +105,19 @@ export default buildConfig({
                     hutk: req.body?.hubspotCookie,
                     pageUri: req.body?.pageUri,
                     pageName: req.body?.pageName,
+                  },
+                  legalConsentOptions: {
+                    consent: {
+                      consentToProcess: req.body.isStoredDataChecked,
+                      text: 'I agree to allow Payload to store and process my personal data.',
+                      communications: [
+                        {
+                          value: req.body.isProductUpdatesChecked,
+                          subscriptionTypeId: process.env.PRIVATE_HUBSPOT_SUBSCRIPTION_ID,
+                          text: 'Stay in the loop with periodic product & marketing updates from Payload. (You can unsubscribe at any time)',
+                        },
+                      ],
+                    },
                   },
                 }
                 try {
