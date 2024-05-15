@@ -13,13 +13,6 @@ require('dotenv').config()
 
 const { DISCORD_TOKEN, DISCORD_SCRAPE_CHANNEL_ID, PAYLOAD_SECRET, MONGODB_URI } = process.env
 
-if (!DISCORD_TOKEN) {
-  throw new Error('DISCORD_TOKEN is required')
-}
-if (!DISCORD_SCRAPE_CHANNEL_ID) {
-  throw new Error('DISCORD_SCRAPE_CHANNEL_ID is required')
-}
-
 async function mapAsync(
   arr: any[],
   callbackfn: (value: any, index: number, array: any[]) => Promise<any>,
